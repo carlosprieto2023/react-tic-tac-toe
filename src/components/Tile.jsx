@@ -1,5 +1,11 @@
-export default function Tile({ className }) {
+export default function Tile({ className, value, onClick, playerTurn }) {
+    let hoverClass = null;
+    if (value == null && playerTurn != null) {
+        hoverClass = `${playerTurn.toLowerCase()}-hover`;
+    }
     return(
-        <div className={className}>X</div>
+        <div onClick={onClick} className={`tile ${className} ${hoverClass}`}>
+            {value}
+        </div>
     )
 }
