@@ -5,6 +5,6 @@ export default function Reset({ gameState, onReset }) {
         return;
     }
     return (
-        <button onClick={onReset} className="reset-button">Reset</button>
+        <button onClick={onReset} className="reset-button">Play Again</button>
     )
 } 
