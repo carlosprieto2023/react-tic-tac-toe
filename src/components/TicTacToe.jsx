@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import Board from "./Board";
+import GameOver from "./GameOver";
+import GameState from "./GameState";
 
 
 const PLAYER_X = "X";
@@ -19,7 +21,7 @@ const winningCombinations = [
     { combo: [2, 4, 6], strikeClass: "strike-diagonal-2" },
 ];
 
-function checkWinner(tiles, setStrikeClass) {
+function checkWinner(tiles, setStrikeClass, setGameState) {
     for (const { combo, strikeClass } of winningCombinations) {
         const tileValue1 = tiles[combo[0]];
         const tileValue2 = tiles[combo[1]];
@@ -30,7 +32,22 @@ function checkWinner(tiles, setStrikeClass) {
             tileValue1 === tileValue3
         ) {
             setStrikeClass(strikeClass);
+            // Checks for player X
+            if (tileValue1 === PLAYER_X) {
+                setGameState(GameState.playerXWins);
+            }
+            // checks for player O
+            else {
+                setGameState(GameState.playerOWins);
+            }
+            // this return stops executing if there's a winner
+            return;
         }
+    }
+    // Checks for Draw
+    const areAllTilesFilledIn = tiles.every((tile) => tile !== null);
+    if (areAllTilesFilledIn) {
+        setGameState(GameState.draw);
     }
 }
 
@@ -38,12 +55,18 @@ export default function TicTacToe() {
     const [tiles, setTiles] = useState(Array(9).fill(null));
     const [playerTurn, setPlayerTurn] = useState(PLAYER_X);
     const [strikeClass, setStrikeClass] = useState();
+    const [gameState, setGameState] = useState(GameState.inProgress);
 
     function handleTileClick(index) {
+        // prevents checking tiles if there's a winning state
+        if (gameState !== GameState.inProgress) {
+            return;
+        }
+        // prevents checking tile if is already checked
         if (tiles[index] !== null) {
             return;
         }
-
+        // copy of the array to check for winner
         const newTiles = [...tiles];
         newTiles[index] = playerTurn;
         setTiles(newTiles);
@@ -53,9 +76,9 @@ export default function TicTacToe() {
             setPlayerTurn(PLAYER_X);
         }
     }
-
+    // Use Effect
     useEffect(() => {
-        checkWinner(tiles, setStrikeClass);
+        checkWinner(tiles, setStrikeClass, setGameState);
     }, [tiles]);
 
     return (
@@ -67,7 +90,7 @@ export default function TicTacToe() {
                 onTileClick={handleTileClick}
                 strikeClass={strikeClass}
             />
-
+            <GameOver gameState={gameState} />
         </div>
     );
 }

@@ -102,3 +102,12 @@ h1 {
   left: 5%;
   transform: skewY(-45deg);
 }
+
+.game-over {
+  text-align: center;
+  border: blue 8px;
+  border-style: dotted;
+  padding: 10px;
+  margin-top: 50px;
+  font-size: 1.5em;
+}
